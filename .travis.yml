@@ -10,12 +10,12 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-bionic-7.0
+      - llvm-toolchain-bionic
     packages:
       - clang-7.0
 
 before_install:
-  - eval "CC=clang-7.0 && CXX=clang++-7.0"
+  - eval "CC=clang && CXX=clang++"
 
 script:
   - mkdir build
