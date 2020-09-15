@@ -17,13 +17,7 @@ jobs:
       matrix:
         config:
           - {
-            name: "Windows Latest MSVC", artifact: "Windows-MSVC.tar.xz",
-            os: windows-latest,
-            build_type: "Release", cc: "cl", cxx: "cl",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
-          }
-          - {
-            name: "Ubuntu Latest GCC", artifact: "Linux.tar.xz",
+            name: "Ubuntu Latest Clang", artifact: "Linux.tar.xz",
             os: ubuntu-latest,
             build_type: "Release", cc: "clang", cxx: "clang++"
           }
@@ -122,16 +116,4 @@ jobs:
             message(FATAL_ERROR "Bad exit status")
           endif()
       - name: Run tests
-        shell: cmake -P {0}
-        run: |
-          include(ProcessorCount)
-          ProcessorCount(N)
-          set(ENV{CTEST_OUTPUT_ON_FAILURE} "ON")
-          execute_process(
-            COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/test/tests/runTests
-            WORKING_DIRECTORY build
-            RESULT_VARIABLE result
-          )
-          if (NOT result EQUAL 0)
-            message(FATAL_ERROR "Running tests failed!")
-          endif()
+        run: ./build/test/tests/runTests
