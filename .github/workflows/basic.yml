@@ -122,16 +122,16 @@ jobs:
             message(FATAL_ERROR "Bad exit status")
           endif()
       - name: Run tests
-          shell: cmake -P {0}
-          run: |
-            include(ProcessorCount)
-            ProcessorCount(N)
-            set(ENV{CTEST_OUTPUT_ON_FAILURE} "ON")
-            execute_process(
-              COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/test/tests/runTests
-              WORKING_DIRECTORY build
-              RESULT_VARIABLE result
-            )
-            if (NOT result EQUAL 0)
-              message(FATAL_ERROR "Running tests failed!")
-            endif()
+        shell: cmake -P {0}
+        run: |
+          include(ProcessorCount)
+          ProcessorCount(N)
+          set(ENV{CTEST_OUTPUT_ON_FAILURE} "ON")
+          execute_process(
+            COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/test/tests/runTests
+            WORKING_DIRECTORY build
+            RESULT_VARIABLE result
+          )
+          if (NOT result EQUAL 0)
+            message(FATAL_ERROR "Running tests failed!")
+          endif()
