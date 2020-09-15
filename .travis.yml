@@ -10,9 +10,8 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-bionic
     packages:
-      - clang-7.0
+      - clang
 
 before_install:
   - eval "CC=clang && CXX=clang++"
