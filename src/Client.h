@@ -6,7 +6,7 @@ class Client
 public:
     virtual void ReceivePacket(const Packet& packet) = 0;
     virtual void SendPacket(const Packet& packet) = 0;
-    static bool IsPacketCorrupt(const Packet& packet);
+    static bool CheckCorrupt(const Packet& packet);
     static Packet GenerateChecksum(const Packet& packet);
 
 private:

@@ -5,11 +5,10 @@
 #include <cstddef>
 #include "Client.h"
 
-bool Client::IsPacketCorrupt(const Packet &packet)
+bool Client::CheckCorrupt(const Packet &packet)
 {
     byte checksum = 0;
     /*******************************
-     * TODO
      * Begin Generate the checksum
      */
     checksum += packet.sequenceNmb;
@@ -22,8 +21,8 @@ bool Client::IsPacketCorrupt(const Packet &packet)
      */
 
     /*******************************
-     * TODO
      * Compare the checksum in the packet and the generated one
+     * and return the result
      */
 
     return packet.checksum + checksum == 255;
@@ -34,7 +33,6 @@ Packet Client::GenerateChecksum(const Packet &packet)
     Packet generatedPacket = packet;
     byte checksum = 0;
     /*******************************
-     * TODO
      * Begin Generate the checksum
      */
     checksum += packet.sequenceNmb;

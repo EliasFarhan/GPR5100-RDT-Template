@@ -1,13 +1,15 @@
 #pragma once
 #include <cstdint>
+#include <cstddef>
 #include <array>
 
 using byte = std::uint8_t;
-const byte INVALID_SEQ_NMB = 255;
+
 struct Packet
 {
+    const static size_t packetSize = 30;
     byte checksum = 0;
     byte sequenceNmb = 0;
-    std::array<byte, 30> data{};
+    std::array<byte, packetSize> data{};
 
 };

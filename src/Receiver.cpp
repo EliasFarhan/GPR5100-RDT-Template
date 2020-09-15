@@ -1,20 +1,21 @@
 #include "Receiver.h"
+#include "Channel.h"
 
 void Receiver::ReceivePacket(const Packet &packet)
 {
-    if(Client::IsPacketCorrupt(packet))
+    if(Client::CheckCorrupt(packet))
     {
-        SendNAK(packet.sequenceNmb);
+        SendACK(packet.sequenceNmb);
     }
     else
     {
-        SendACK(packet.sequenceNmb);
+        SendNAK(packet.sequenceNmb);
     }
 }
 
 void Receiver::SendPacket(const Packet &packet)
 {
-
+    channel_.SendToSender(packet);
 }
 
 void Receiver::SendACK(byte sequenceNmb)
