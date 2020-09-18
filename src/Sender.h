@@ -24,6 +24,12 @@ public:
     void CalculateFirstRTT(float r);
     void CalculateNewRTT(float r);
     [[nodiscard]] bool IsMessageSent() const;
+
+    [[nodiscard]] float GetSrtt() const;
+
+    [[nodiscard]] float GetRttvar() const;
+
+    [[nodiscard]] float GetRto() const;
 protected:
     Channel& channel_;
     std::vector<Packet> sentPackets_;

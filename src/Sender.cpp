@@ -16,7 +16,7 @@ void Sender::ReceivePacket(const Packet &packet)
     }
     bool isAck = packet.data[0];
     byte seqNmb = packet.sequenceNmb;
-
+    const Packet& sentPacket = sentPackets_[seqNmb-1];
     if(isAck)
     {
         //TODO manage internal state when receiving ack
@@ -24,11 +24,11 @@ void Sender::ReceivePacket(const Packet &packet)
         {
             if(seqNmb == 1)
             {
-                CalculateFirstRTT(packet.rtt);
+                CalculateFirstRTT(sentPacket.rtt);
             }
             else
             {
-                CalculateNewRTT(packet.rtt);
+                CalculateNewRTT(sentPacket.rtt);
             }
             timer_ = 0.0f;
             lastSendSeqNmb_++;
@@ -92,20 +92,16 @@ byte Sender::GetLastSendSeqNmb() const
 
 void Sender::CalculateFirstRTT(float r)
 {
-    /***************************
-     *
-     */
      srtt_ = r;
      rttvar_ = r/2.0f;
-     rto_ = srtt_ + std::max(g_, k_*rttvar_);
-
+     rto_ = std::max(srtt_ + std::max(g_, k_*rttvar_), 1.0f);
 }
 
 void Sender::CalculateNewRTT(float r)
 {
-    rttvar_ = (1.0f-beta_)*rttvar_+beta_* std::abs(srtt_-r);
+    rttvar_ = (1.0f - beta_) * rttvar_ + beta_ * std::abs(srtt_-r);
     srtt_ = (1.0f-alpha_)*srtt_+alpha_*r;
-    rto_ = srtt_ + std::max(g_, k_*rttvar_);
+    rto_ = std::max(srtt_ + std::max(g_, k_*rttvar_), 1.0f);
 
 }
 
@@ -130,4 +126,16 @@ void Sender::SendNewPacket(float packetDelay)
     Packet& packet = sentPackets_[lastSendSeqNmb_-1];
     packet.rtt = packetDelay;
     SendPacket(packet);
+}
+
+float Sender::GetSrtt() const {
+    return srtt_;
+}
+
+float Sender::GetRttvar() const {
+    return rttvar_;
+}
+
+float Sender::GetRto() const {
+    return rto_;
 }
