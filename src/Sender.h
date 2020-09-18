@@ -30,6 +30,8 @@ public:
     [[nodiscard]] float GetRttvar() const;
 
     [[nodiscard]] float GetRto() const;
+
+    [[nodiscard]] size_t GetPacketNmb() const;
 protected:
     Channel& channel_;
     std::vector<Packet> sentPackets_;

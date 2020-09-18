@@ -34,7 +34,8 @@ TEST(timeout, timeout_interval1)
     channel.Send(longText);
     float avgDelay = 0.5f;
     float margin = 0.2f;
-    while(!channel.GetSender().IsMessageSent())
+    size_t packetToSent = channel.GetSender().GetPacketNmb();
+    for(size_t i = 0; i < packetToSent; i++)
     {
         float delay = RandomRange(avgDelay - margin, avgDelay + margin);
         channel.SendNewPacket(delay);
@@ -56,7 +57,8 @@ TEST(timeout, timeout_interval2)
     float avgDelay = 2.0f;
     float margin = 0.3f;
     std::vector<float> delays;
-    while(!channel.GetSender().IsMessageSent())
+    size_t packetToSent = channel.GetSender().GetPacketNmb();
+    for(size_t i = 0; i < packetToSent; i++)
     {
         float delay = RandomRange(avgDelay - margin, avgDelay + margin);
         channel.SendNewPacket(delay);
