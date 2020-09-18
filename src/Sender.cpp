@@ -22,6 +22,15 @@ void Sender::ReceivePacket(const Packet &packet)
         //TODO manage internal state when receiving ack
         if(seqNmb == lastSendSeqNmb_)
         {
+            if(seqNmb == 1)
+            {
+                CalculateFirstRTT(packet.rtt);
+            }
+            else
+            {
+                CalculateNewRTT(packet.rtt);
+            }
+            timer_ = 0.0f;
             lastSendSeqNmb_++;
         }
     }
@@ -63,12 +72,62 @@ void Sender::Send(std::string_view msg)
     lastSendSeqNmb_ = 1;
 }
 
-void Sender::Update()
+void Sender::Update(float dt)
 {
-    SendPacket(sentPackets_[lastSendSeqNmb_-1]);
+    if(IsMessageSent())
+    {
+        return;
+    }
+    timer_ += dt;
+    if(timer_ >= rto_)
+    {
+        OnTimeout();
+    }
 }
 
 byte Sender::GetLastSendSeqNmb() const
 {
     return lastSendSeqNmb_;
+}
+
+void Sender::CalculateFirstRTT(float r)
+{
+    /***************************
+     *
+     */
+     srtt_ = r;
+     rttvar_ = r/2.0f;
+     rto_ = srtt_ + std::max(g_, k_*rttvar_);
+
+}
+
+void Sender::CalculateNewRTT(float r)
+{
+    rttvar_ = (1.0f-beta_)*rttvar_+beta_* std::abs(srtt_-r);
+    srtt_ = (1.0f-alpha_)*srtt_+alpha_*r;
+    rto_ = srtt_ + std::max(g_, k_*rttvar_);
+
+}
+
+bool Sender::IsMessageSent() const {
+    return lastSendSeqNmb_ == sentPackets_.size() + 1;
+}
+
+void Sender::OnTimeout()
+{
+    Packet& packet = sentPackets_[lastSendSeqNmb_-1];
+    packet.rtt = packetDelay_;
+    SendPacket(packet);
+    rto_ *= 2.0f;
+    timer_ = 0.0f;
+}
+
+void Sender::SendNewPacket(float packetDelay)
+{
+    if(IsMessageSent())
+        return;
+    packetDelay_ = packetDelay;
+    Packet& packet = sentPackets_[lastSendSeqNmb_-1];
+    packet.rtt = packetDelay;
+    SendPacket(packet);
 }

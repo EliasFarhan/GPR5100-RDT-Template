@@ -18,6 +18,18 @@ public:
         Sender::ReceivePacket(packet);
     }
 
+    void OnTimeout() override
+    {
+        hasTimeout = true;
+        Sender::OnTimeout();
+    }
+    [[nodiscard]] bool HasTimeout() const
+    {
+        return hasTimeout;
+    }
 private:
     Packet lastPacketReceived_;
+    bool hasTimeout = false;
+
+
 };
