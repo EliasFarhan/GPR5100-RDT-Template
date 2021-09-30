@@ -28,7 +28,7 @@ void Sender::ReceivePacket(const Packet &packet)
     }
     else
     {
-        //TODO managee internal state when receiving nak
+        //TODO manage internal state when receiving nak
     }
 }
 
